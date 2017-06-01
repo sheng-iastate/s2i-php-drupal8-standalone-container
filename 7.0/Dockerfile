@@ -20,7 +20,8 @@ RUN yum install -y centos-release-scl && \
     yum-config-manager --enable centos-sclo-rh-testing && \
     INSTALL_PKGS="rh-php70 rh-php70-php rh-php70-php-mysqlnd rh-php70-php-pgsql rh-php70-php-bcmath \
                   rh-php70-php-gd rh-php70-php-intl rh-php70-php-ldap rh-php70-php-mbstring rh-php70-php-pdo \
-                  rh-php70-php-process rh-php70-php-soap rh-php70-php-opcache rh-php70-php-xml mariadb55 \
+                  rh-php70-php-process rh-php70-php-soap rh-php70-php-opcache rh-php70-php-xml \
+                  mariadb55 \
                   rh-php70-php-gmp" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS --nogpgcheck && \
     rpm -V $INSTALL_PKGS && \
@@ -29,9 +30,8 @@ RUN yum install -y centos-release-scl && \
 # Copy the S2I scripts from the specific language image to $STI_SCRIPTS_PATH
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
-# Each language image can have 'contrib' a directory with extra files needed to
-# run and build the applications.
-COPY ./contrib/ /opt/app-root
+# Copy extra files to the image.
+COPY ./root/ /
 
 # In order to drop the root user, we have to make some directories world
 # writeable as OpenShift default security model is to run the container under
