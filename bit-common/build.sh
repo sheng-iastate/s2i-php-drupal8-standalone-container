@@ -104,7 +104,7 @@ for dir in ${dirs}; do
     fi
   fi
 
-  if [[ -v TEST_OPENSHIFT_MODE ]]; then
+  if [[  -n "${TEST_OPENSHIFT_MODE}" ]]; then
     if [[ -x test/run-openshift ]]; then
       VERSION=$dir IMAGE_NAME=${IMAGE_NAME} test/run-openshift
     else
