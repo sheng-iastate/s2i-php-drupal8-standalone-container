@@ -40,4 +40,4 @@ manpages = $(shell for version in $(if $(VERSION), $(VERSION), $(VERSIONS)); \
 manpages: $(manpages)
 $(manpages): %root/help.1: %README.md
 	mkdir -p $(@D)
-	go-md2man -in "$^" -out "$@"
+#	go-md2man -in "$^" -out "$@"
