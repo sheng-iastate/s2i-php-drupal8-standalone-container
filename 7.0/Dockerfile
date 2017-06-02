@@ -11,9 +11,10 @@ ENV PHP_VERSION=7.0 \
     PATH=$PATH:/opt/rh/rh-php70/root/usr/bin
 
 LABEL io.k8s.description="Platform for building and running PHP 7.0 applications" \
-      io.k8s.display-name="Apache 2.4 with PHP 7.0" \
+      io.k8s.display-name="BIT Apache 2.4 with PHP 7.0" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,php,php70,rh-php70"
+      io.openshift.tags="builder,php,php70,rh-php70,bitd8:v1" \
+      io.openshift.non-scalable="true"
 
 # Install Apache httpd and PHP
 RUN yum install -y centos-release-scl && \
@@ -21,7 +22,7 @@ RUN yum install -y centos-release-scl && \
     INSTALL_PKGS="rh-php70 rh-php70-php rh-php70-php-mysqlnd rh-php70-php-pgsql rh-php70-php-bcmath \
                   rh-php70-php-gd rh-php70-php-intl rh-php70-php-ldap rh-php70-php-mbstring rh-php70-php-pdo \
                   rh-php70-php-process rh-php70-php-soap rh-php70-php-opcache rh-php70-php-xml \
-                  mariadb55 \
+                  mariadb55-mariadb \
                   rh-php70-php-gmp" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS --nogpgcheck && \
     rpm -V $INSTALL_PKGS && \
