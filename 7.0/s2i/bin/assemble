@@ -6,6 +6,8 @@ mkdir ./.ssh
 cp ssh-privatekey ./.ssh/id_rsa
 chmod 600 ./.ssh/id_rsa
 
+ssh-keyscan -H github.com >> ./.ssh/known_hosts
+
 git clone --mirror 'git@github.com:isubit/iastate8.git' /tmp/test
 
 #ls -alR
