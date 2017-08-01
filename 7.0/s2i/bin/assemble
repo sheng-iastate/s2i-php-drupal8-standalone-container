@@ -2,6 +2,8 @@
 
 mkdir ./.ssh
 
+ls -al
+
 set -e
 
 shopt -s dotglob
