@@ -1,9 +1,13 @@
 #!/bin/bash
 
+echo $HOME
+
 mkdir ./.ssh
 cp ssh-privatekey ./.ssh/id_rsa
+chown 600 ./.ssh/id_rsa
 
-ls -alR
+#ls -alR
+
 
 
 set -e
