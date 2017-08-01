@@ -1,17 +1,12 @@
 #!/bin/bash
 
-echo $HOME
-
+# copy the build secret key to the home for the builder
 mkdir ./.ssh
 cp ssh-privatekey ./.ssh/id_rsa
 chmod 600 ./.ssh/id_rsa
 
+# Add github to known hosts so the git clones can happen from composer
 ssh-keyscan -H github.com >> ./.ssh/known_hosts
-
-git clone --mirror 'git@github.com:isubit/iastate8.git' /tmp/test
-
-#ls -alR
-
 
 
 set -e
