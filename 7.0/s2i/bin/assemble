@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir ./.ssh
+
 set -e
 
 shopt -s dotglob
