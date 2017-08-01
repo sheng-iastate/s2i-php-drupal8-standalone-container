@@ -1,8 +1,10 @@
 #!/bin/bash
 
 mkdir ./.ssh
+cp ssh-privatekey ./.ssh/id_rsa
 
-ls -al
+ls -alR
+
 
 set -e
 
