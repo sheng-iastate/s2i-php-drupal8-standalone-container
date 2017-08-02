@@ -8,7 +8,7 @@ MAINTAINER SoftwareCollections.org <sclorg@redhat.com>
 EXPOSE 8080
 
 ENV PHP_VERSION=7.0 \
-    PATH=$PATH:/opt/rh/rh-php70/root/usr/bin
+    PATH=$PATH:/opt/rh/rh-php70/root/usr/bin:/opt/rh/mariadb55/root/usr/bin:/opt/app-root/src/vendor/bin
 
 LABEL io.k8s.description="Platform for building and running PHP 7.0 applications" \
       io.k8s.display-name="BIT Apache 2.4 with PHP 7.0" \
