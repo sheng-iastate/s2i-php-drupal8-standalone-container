@@ -34,5 +34,11 @@ if [ -f composer.json ]; then
   fi
 fi
 
+
+## Rather than mounting into the directory  going to try to symlink
+mv web/sites web/site.original
+ln -s /mnt/drupal8-sites web/sites
+
+
 # Fix source directory permissions
 fix-permissions ./
