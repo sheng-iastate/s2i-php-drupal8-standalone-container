@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ls -al
+
 # copy the build secret key to the home for the builder
 mkdir ./.ssh
 cp ssh-privatekey ./.ssh/id_rsa
