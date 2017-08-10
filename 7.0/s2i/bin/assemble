@@ -35,10 +35,31 @@ if [ -f composer.json ]; then
 fi
 
 
-## Rather than mounting into the directory  going to try to symlink
-mv web/sites web/sites.original
-ln -s /mnt/drupal8-sites web/sites
+# peform the site install if the variables are there
+#Populate varibles from secrets mounted in project
+DBHOST=$(cat hostname)
+DBGRANTUSER=$(cat username)
+DBGRANTUSERPW=$(cat password)
 
+SITE=${SITE:-}
+DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
+echo "SITE = '$SITE'"
+
+if [ ! -z $DBHOST ] && [ ! -z $DBGRANTUSER ] && [ ! -z $DBGRANTUSERPW ] && [ ! -z $SITE ] && [ ! -z $DRUPALADMINPASSWORD ]
+then
+	
+	PASSWORD=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c16)
+	
+	
+	echo "Drush site install"
+	cd web
+	#drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --sites-subdir=$SITE --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
+	cd
+else
+	echo "An install variable is not set"
+fi
 
 # Fix source directory permissions
 fix-permissions ./
+
+
