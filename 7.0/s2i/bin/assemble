@@ -41,7 +41,7 @@ fi
 
 
 # if Database already exists than just fail
-DBCHECK=`mysql -u $DBGRANTUSER -p$DRUPALADMINPASSWORD -h $DBHOST --skip-column-names -e "SHOW DATABASES LIKE '$SITE'"` | grep -Fo $SITE;
+DBCHECK=`mysql -u $DBGRANTUSER -p$DBGRANTUSERPW -h $DBHOST --skip-column-names -e "SHOW DATABASES LIKE '$SITE'"` | grep -Fo $SITE;
 
 echo "DBCHECK = '$DBCHECK'"
 if [ "$DBCHECK" == "$SITE" ]; then
