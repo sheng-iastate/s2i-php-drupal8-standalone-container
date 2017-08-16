@@ -40,6 +40,21 @@ elif [ -z $DRUPALADMINPASSWORD ]; then
 fi
 
 
+# if Database already exists than just fail
+DBCHECK=`mysql -u $DBGRANTUSER -p$DRUPALADMINPASSWORD --skip-column-names -e "SHOW DATABASES LIKE '$SITE'"` | grep -Fo $SITE;
+
+echo "DBCHECK = '$DBCHECK'"
+if [ "$DBCHECK" == "$SITE" ]; then
+
+	echo "Database $SITE already exists"
+	exit 1;
+
+fi
+
+echo "Force Exit for test"
+exit 1;
+
+
 # copy the build secret key to the home for the builder
 mkdir ./.ssh
 cp ssh-privatekey ./.ssh/id_rsa
