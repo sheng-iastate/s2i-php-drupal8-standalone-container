@@ -46,21 +46,48 @@ DBGRANTUSERPW=$(cat db/password)
 
 SITE=${SITE:-}
 DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
+
+
+
+
 echo "SITE = '$SITE'"
 
-if [ ! -z $DBHOST ] && [ ! -z $DBGRANTUSER ] && [ ! -z $DBGRANTUSERPW ] && [ ! -z $SITE ] && [ ! -z $DRUPALADMINPASSWORD ]
-then
+if [ -z $DBHOST]; then
+
+	echo "No DBHOST set."
+	exit 1;
+
+elif [ -z $DBGRANTUSER]; then
+	
+	echo "No DBGRANTUSER set."
+	exit 1;
+
+elif [ -z $DBGRANTUSERPW]; then
+
+	echo "No DBGRANTUSERPW set."
+	exit 1;
+
+elif [ -z $SITE]; then
+	
+	echo "No SITE set."
+	exit 1;
+	
+elif [ -z $DRUPALADMINPASSWORD]; then
+	
+	echo "No DRUPALADMINPASSWORD set."
+	exit 1;
+	
+else
 	
 	PASSWORD=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c16)
-	
 	
 	echo "Drush site install"
 	cd web
 	#drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --sites-subdir=$SITE --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
 	cd
-else
-	echo "An install variable is not set"
+	
 fi
+
 
 # Fix source directory permissions
 fix-permissions ./
