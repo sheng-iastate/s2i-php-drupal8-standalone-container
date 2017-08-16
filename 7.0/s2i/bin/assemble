@@ -51,9 +51,6 @@ if [ "$DBCHECK" == "$SITE" ]; then
 
 fi
 
-echo "Force Exit for test"
-exit 1;
-
 
 # copy the build secret key to the home for the builder
 mkdir ./.ssh
