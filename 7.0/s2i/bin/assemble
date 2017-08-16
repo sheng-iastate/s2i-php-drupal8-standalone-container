@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ls -al
+ls -al db
 
 # copy the build secret key to the home for the builder
 mkdir ./.ssh
@@ -39,9 +40,9 @@ fi
 
 # peform the site install if the variables are there
 #Populate varibles from secrets mounted in project
-DBHOST=$(cat hostname)
-DBGRANTUSER=$(cat username)
-DBGRANTUSERPW=$(cat password)
+DBHOST=$(cat db/hostname)
+DBGRANTUSER=$(cat db/username)
+DBGRANTUSERPW=$(cat db/password)
 
 SITE=${SITE:-}
 DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
