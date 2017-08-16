@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#Populate varibles from secrets mounted in project
+DBHOST=$(cat db/hostname)
+DBGRANTUSER=$(cat db/username)
+DBGRANTUSERPW=$(cat db/password)
+
+SITE=${SITE:-}
+DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
+
 
 # Check to see if we have everything set
 echo "SITE = '$SITE'"
@@ -68,19 +76,6 @@ fi
 
 
 # peform the site install if the variables are there
-#Populate varibles from secrets mounted in project
-DBHOST=$(cat db/hostname)
-DBGRANTUSER=$(cat db/username)
-DBGRANTUSERPW=$(cat db/password)
-
-SITE=${SITE:-}
-DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
-
-
-
-
-
-	
 if [ ! -z $DBHOST ] && [ ! -z $DBGRANTUSER ] && [ ! -z $DBGRANTUSERPW ] && [ ! -z $SITE ] && [ ! -z $DRUPALADMINPASSWORD ] 
 then
 
