@@ -98,7 +98,7 @@ then
 	drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
 	
 	
-	drush variable-set site_name "$SITE"
+	drush config-set system.site name "$SITE" -y
 	
 	cd
 	
