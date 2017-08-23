@@ -154,13 +154,15 @@ EOPHP
 		fi
 
 
-		# append the db settings
+		# append the default settings, neet to set write then take it away
+		chmod +w sites/default/settings.php
 		cat >> sites/default/settings.php << EOPHP
 
 \$settings['hash_salt'] = '${SITEHASHSALT}';
 
 EOPHP
-
+		chmod -w sites/default/settings.php
+		
 		#set the site
 		drush config-set system.site name "$SITE" -y
 		cd
