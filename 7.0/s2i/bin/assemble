@@ -6,6 +6,8 @@ DBGRANTUSER=$(cat db/username)
 DBGRANTUSERPW=$(cat db/password)
 
 SITE=${SITE:-}
+SITEPASSWORD=${SITEPASSWORD:-}
+SITEHASHSALT=${SITEHASHSALT:-}
 DRUPALADMINPASSWORD=${DRUPALADMINPASSWORD:-}
 
 
@@ -31,6 +33,16 @@ elif [ -z $SITE ]; then
 	
 	echo "No SITE set."
 	exit 1;
+
+#elif [ -z $SITEPASSWORD ]; then
+#	
+#	echo "No SITEPASSWORD set."
+#	exit 1;
+#
+#elif [ -z $SITEHASHSALT ]; then
+#	
+#	echo "No SITEHASHSALT set."
+#	exit 1;
 	
 elif [ -z $DRUPALADMINPASSWORD ]; then
 	
@@ -39,17 +51,6 @@ elif [ -z $DRUPALADMINPASSWORD ]; then
 
 fi
 
-
-# if Database already exists than just fail
-DBCHECK=`mysql -u $DBGRANTUSER -p$DBGRANTUSERPW -h $DBHOST --skip-column-names -e "SHOW DATABASES LIKE '$SITE'"` 
-
-echo "DBCHECK = '$DBCHECK'"
-if [ "$DBCHECK" == "$SITE" ]; then
-
-	echo "Database $SITE already exists"
-	exit 1;
-
-fi
 
 
 # copy the build secret key to the home for the builder
@@ -87,22 +88,74 @@ if [ -f composer.json ]; then
 fi
 
 
-# peform the site install if the variables are there
+# peform the site install or update if the variables are there
 if [ ! -z $DBHOST ] && [ ! -z $DBGRANTUSER ] && [ ! -z $DBGRANTUSERPW ] && [ ! -z $SITE ] && [ ! -z $DRUPALADMINPASSWORD ] 
 then
 
-	PASSWORD=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c16)
+	# if Database already exists than just fail
+	DBCHECK=`mysql -u $DBGRANTUSER -p$DBGRANTUSERPW -h $DBHOST --skip-column-names -e "SHOW DATABASES LIKE '$SITE'"` 
+
+	echo "DBCHECK = '$DBCHECK'"
+	if [ "$DBCHECK" == "$SITE" ]; then
+
+		# recreate the site files and directories
+
+		echo "Database $SITE already exists"
+		if [ -z $SITEPASSWORD ]; then
+			echo "Error Database $SITE exists but SITEPASSWORD not set"
+			exit 1;
+		fi
+
+
+		if [ ! -z $SITEHASHSALT ]; then
+			SITEHASHSALT=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c73)
+		fi
+
+
+		# append the db settings
+		cat >> web/sites/default/settings.php << EOPHP
+
+\$config_directories['sync'] = 'profiles/iastate8/config/sync';
+\$databases['default']['default'] = array (
+	'database' => '${SITE}',
+	'username' => '${SITE}',
+	'password' => '${SITEPASSWORD}'
+	'prefix' => ''
+	'host' => '${DBHOST}',
+	'port' => ''
+	'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql'
+	'driver' => 'mysql'
+); 
+\$settings['install_profile'] = 'iastate8'
+\$settings['hash_salt'] = '${SITEHASHSALT}';
+
+EOPHP
+
+		# commands to run
+		cd web
+		drush updatedb -y
+		drush cache-rebuild -y
+		cd
+		
+	else
+
+		PASSWORD=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c16)
+		if [ ! -z $SITEPASSWORD ]; then
+			PASSWORD=${SITEPASSWORD}
+		fi
+		
+		echo "Drush site install"
+		cd web
+		drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
 	
-	echo "Drush site install"
-	cd web
-	drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
-	
-	
-	drush config-set system.site name "$SITE" -y
-	
-	cd
-	
-fi
+		#set the site
+		drush config-set system.site name "$SITE" -y
+		cd
+
+	fi # end of site install
+
+fi #end of variables set
+
 
 
 # Fix source directory permissions
