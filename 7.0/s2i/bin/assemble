@@ -119,14 +119,14 @@ then
 \$databases['default']['default'] = array (
 	'database' => '${SITE}',
 	'username' => '${SITE}',
-	'password' => '${SITEPASSWORD}'
-	'prefix' => ''
+	'password' => '${SITEPASSWORD}',
+	'prefix' => '',
 	'host' => '${DBHOST}',
-	'port' => ''
-	'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql'
+	'port' => '',
+	'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
 	'driver' => 'mysql'
 ); 
-\$settings['install_profile'] = 'iastate8'
+\$settings['install_profile'] = 'iastate8';
 \$settings['hash_salt'] = '${SITEHASHSALT}';
 
 EOPHP
@@ -147,7 +147,20 @@ EOPHP
 		echo "Drush site install"
 		cd web
 		drush site-install iastate8 --db-url=mysql://$SITE:$PASSWORD@$DBHOST/$SITE --db-su=$DBGRANTUSER --db-su-pw=$DBGRANTUSERPW --account-pass=$DRUPALADMINPASSWORD --site-name=$SITE -y
-	
+
+		# change the hash salt
+		if [ ! -z $SITEHASHSALT ]; then
+			SITEHASHSALT=$(env LC_CTYPE=C tr -dc A-Z-a-z-0-9 < /dev/urandom | head -c73)
+		fi
+
+
+		# append the db settings
+		cat >> sites/default/settings.php << EOPHP
+
+\$settings['hash_salt'] = '${SITEHASHSALT}';
+
+EOPHP
+
 		#set the site
 		drush config-set system.site name "$SITE" -y
 		cd
